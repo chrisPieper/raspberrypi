@@ -1,34 +1,34 @@
-"Code to control the relay board from the Raspberry Pi."
-
-import time
+""" Switch two relays 0 and 1, momentarily."""
 import RPi.GPIO as GPIO
+import time
 
-PIN = [32, 36]
+pin = [ 32, 36 ]
 def init():
-    "Create the initial state of the relays."
+    """ Initialize the Raspberry Pi GPIO pins. """
     GPIO.setmode(GPIO.BOARD)
 
-    # set PIN 32 output & default state
-    GPIO.setup(32, GPIO.OUT)
-    GPIO.output(32, GPIO.HIGH)
+    # set pin 32 output & default state
+    GPIO.setup(32,GPIO.OUT)
+    GPIO.output(32,GPIO.HIGH)
 
-    # set PIN 36 output & default state
-    GPIO.setup(36, GPIO.OUT)
-    GPIO.output(36, GPIO.HIGH)
+    # set pin 36 output & default state
+    GPIO.setup(36,GPIO.OUT)
+    GPIO.output(36,GPIO.HIGH)
 
 def press(switch):
-    "The relay is activated or 'pressed', 0 or 1, on each call."
+    """ Momentarily switch on & off a relay [0|1]. """
     moment = 0.01
-    if switch in range(0, 2):
+    if switch in range(0,2):
         try:
-            GPIO.output(PIN[switch], GPIO.LOW)
+            GPIO.output(pin[switch], GPIO.LOW)
             print("Relay " + str(switch) + " pressed")
             time.sleep(moment)
-            GPIO.output(PIN[switch], GPIO.HIGH)
+            GPIO.output(pin[switch], GPIO.HIGH)
         except KeyboardInterrupt:
             GPIO.cleanup()
 
 def cleanup():
-    "Cleanup after the GPIO library."
+    """ Once the relay is done operation clean up after it. """
     GPIO.cleanup()
     print("All off... Bye!!!")
+
