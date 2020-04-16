@@ -16,7 +16,7 @@ def check(ip_address, mac_list):
         return False
 
 def get_mac(ip_address):
-    arp_string = os.popen('arp -a | grep '+ip_address).read()
+    arp_string = os.popen('arp -a | grep ' + ip_address).read()
     if ip_address in arp_string:
         left, arp_string = arp_string.split('at ', 1)
         if 'on' in arp_string:
