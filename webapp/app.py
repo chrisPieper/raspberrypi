@@ -1,41 +1,38 @@
+""" This is the main application file. """
 from flask import Flask, render_template, redirect, request, abort
 from flask_bootstrap import Bootstrap
 
+import auth
+import os
 import relay
 
-app = Flask(__name__)
-app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
-Bootstrap(app)
+APP = Flask(__name__)
+APP.config.from_pyfile("config.py")
+Bootstrap(APP)
 
 LEFT = 0
 RIGHT = 1
-relays = { 'Left':LEFT, 'Right':RIGHT }
+RELAYS = {"Left": LEFT, "Right": RIGHT}
+MAC_LIST = APP.config['MAC_LIST']
 
-@app.route('/', methods = ['POST', 'GET'])
+@APP.route("/", methods=["POST", "GET"])
 def index():
-
-    if request.method == 'GET':
+    """ This processes the default route. """
+    if request.method == "GET":
         return render_template("index.html")
 
-    if request.method == 'POST':
-        action = request.form['action']
-        if action in relays.keys():
-            relay.press(relays[action])
+    if (request.method == "POST") and (auth.check(request.remote_addr, MAC_LIST)):
+        action = request.form["action"]
+        if action in RELAYS.keys():
+            relay.press(RELAYS[action])
             return redirect("/")
         else:
             abort(400)
+    else:
+        abort(403)
 
-@app.after_request
-def add_header(response):
-    # response.cache_contro.no_store = True
-    response.headers['Cache-Control'] = ("no-store, no-cache, "
-                       "must-revalidate, post-check=0, pre-check=0, "
-                       "max-age=0")
-    response.headers['Pragma'] = 'no-cache'
-    response.headers['Expires'] = '-1'
-    return response
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     relay.init()
-    app.run(debug=True, host='0.0.0.0')
+    APP.run(debug=True, host="0.0.0.0")
     relay.cleanup()

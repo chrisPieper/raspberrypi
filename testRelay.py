@@ -3,13 +3,13 @@ import time
 
 GPIO.setmode(GPIO.BOARD)
 
-GPIO.setup(32,GPIO.OUT)
-GPIO.output(32,GPIO.HIGH)
+GPIO.setup(32, GPIO.OUT)
+GPIO.output(32, GPIO.HIGH)
 
-GPIO.setup(36,GPIO.OUT)
-GPIO.output(36,GPIO.HIGH)
+GPIO.setup(36, GPIO.OUT)
+GPIO.output(36, GPIO.HIGH)
 
-try :
+try:
     print("Ready?")
     time.sleep(5)
     moment = 0.01
@@ -31,7 +31,6 @@ try :
     GPIO.cleanup()
     print("All off... Bye!!!")
 
-except KeyboardInterrupt :
+except KeyboardInterrupt:
     print("Done!")
     GPIO.cleanup()
-
