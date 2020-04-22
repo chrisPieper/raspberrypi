@@ -11,6 +11,8 @@ def check(ip_address, mac_list):
         if mac in mac_list:
             return True
         else:
+            print("Mac address not found:")
+            print(mac)
             return False
     else:
         return False

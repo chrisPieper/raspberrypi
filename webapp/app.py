@@ -1,5 +1,5 @@
 """ This is the main application file. """
-from flask import Flask, render_template, redirect, request, abort
+from flask import Flask, abort, flash, render_template, redirect, request, url_for
 from flask_bootstrap import Bootstrap
 
 import auth
@@ -8,7 +8,7 @@ import relay
 
 APP = Flask(__name__)
 APP.config.from_pyfile("config.py")
-Bootstrap(APP)
+bootstrap = Bootstrap(APP)
 
 LEFT = 0
 RIGHT = 1
@@ -25,12 +25,20 @@ def index():
         action = request.form["action"]
         if action in RELAYS.keys():
             relay.press(RELAYS[action])
-            return redirect("/")
+            flash(action + " button pressed")
+            return redirect(url_for('index'))
         else:
-            abort(400)
+            abort(500)
     else:
         abort(403)
 
+@APP.errorhandler(403)
+def forbidden(e):
+    return render_template('403.html'), 403
+
+@APP.errorhandler(500)
+def internal_server_error(e):
+    return render_template('500.html'), 500
 
 if __name__ == "__main__":
     relay.init()
