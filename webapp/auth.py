@@ -1,9 +1,10 @@
 """ Authentication of a local activation."""
 from flask import jsonify
+import logging
 import os
 import sys
 
-def check(ip_address, mac_list):
+def check(ip_address, mac_list, logger):
     """ Check the IP for being within the local network. """
 
     if '192.168.1' in ip_address:
@@ -11,8 +12,7 @@ def check(ip_address, mac_list):
         if mac in mac_list:
             return True
         else:
-            print("Mac address not found:")
-            print(mac)
+            logger.warning('MAC address not found: %s', mac)
             return False
     else:
         return False

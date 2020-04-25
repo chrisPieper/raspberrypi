@@ -1,14 +1,28 @@
 """ This is the main application file. """
 from flask import Flask, abort, flash, render_template, redirect, request, url_for
 from flask_bootstrap import Bootstrap
+from flask.logging import default_handler
 
 import auth
+import logging
 import os
 import relay
+import time
 
+from logging.handlers import TimedRotatingFileHandler
+
+handler = TimedRotatingFileHandler("log/garage_opener.log",
+                                    when="midnight",
+                                    interval=1,
+                                    backupCount=7)
+logging.getLogger('werkzeug').setLevel(logging.DEBUG)
+logging.getLogger('werkzeug').addHandler(handler)
 APP = Flask(__name__)
-APP.config.from_pyfile("config.py")
+APP.logger.setLevel(logging.INFO)
+APP.logger.addHandler(handler)
+
 bootstrap = Bootstrap(APP)
+APP.config.from_pyfile("config.py")
 
 LEFT = 0
 RIGHT = 1
@@ -21,15 +35,20 @@ def index():
     if request.method == "GET":
         return render_template("index.html")
 
-    if (request.method == "POST") and (auth.check(request.remote_addr, MAC_LIST)):
+    if (request.method == "POST") and (auth.check(request.remote_addr, MAC_LIST, APP.logger)):
         action = request.form["action"]
         if action in RELAYS.keys():
             relay.press(RELAYS[action])
             flash(action + " button pressed")
+            APP.logger.warning('%s button pressed by %s', 
+                action, 
+                auth.get_mac(request.remote_addr))
             return redirect(url_for('index'))
         else:
+            APP.logger.error('Action other than Left or Right')
             abort(500)
     else:
+        APP.logger.warning('POST attempted by %s', request.remote_addr)
         abort(403)
 
 @APP.errorhandler(403)
@@ -42,5 +61,5 @@ def internal_server_error(e):
 
 if __name__ == "__main__":
     relay.init()
-    APP.run(debug=True, host="0.0.0.0")
+    APP.run(debug=False, host="0.0.0.0")
     relay.cleanup()
