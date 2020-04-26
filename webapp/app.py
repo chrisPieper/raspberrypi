@@ -15,7 +15,6 @@ handler = TimedRotatingFileHandler("log/garage_opener.log",
                                     when="midnight",
                                     interval=1,
                                     backupCount=7)
-logging.getLogger('werkzeug').setLevel(logging.DEBUG)
 logging.getLogger('werkzeug').addHandler(handler)
 APP = Flask(__name__)
 APP.logger.setLevel(logging.INFO)
