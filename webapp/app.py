@@ -2,6 +2,8 @@
 import logging
 from logging.handlers import TimedRotatingFileHandler
 
+import yaml
+
 from flask import Flask, abort, flash, redirect, render_template
 from flask import request, url_for
 from flask_bootstrap import Bootstrap
@@ -17,13 +19,20 @@ APP.logger.setLevel(logging.INFO)
 APP.logger.addHandler(HANDLER)
 
 Bootstrap(APP)
-APP.config.from_pyfile("config.py")
 
-LEFT = 0
-RIGHT = 1
-RELAYS = {"Left": LEFT, "Right": RIGHT}
-MAC_LIST = APP.config['MAC_LIST']
+with open('static/config.yaml', 'r') as yaml_file:
+    try:
+        data = yaml.load(yaml_file, Loader=yaml.FullLoader)
+        
+    except yaml.YAMLError as exception:
+        APP.logger.error('Could not open YAML configuration file.')
+        exit()
 
+SEND_FILE_MAX_AGE_DEFAULT = data['SEND_FILE_MAX_AGE_DEFAULT']
+MAC_LIST = data['MAC_LIST']
+RELAYS = data['RELAYS']
+RANGE = data['RANGE']
+APP.secret_key = data['SECRET_KEY']
 
 @APP.route("/", methods=["POST", "GET"])
 def index():
@@ -32,14 +41,12 @@ def index():
         return render_template("index.html")
 
     if (request.method == "POST") and \
-            (auth.check(request.remote_addr, MAC_LIST, APP.logger)):
+            (auth.check(RANGE, request.remote_addr, MAC_LIST, APP.logger)):
         action = request.form["action"]
         if action in RELAYS.keys():
-            relay.press(RELAYS[action])
-            flash(action + " button pressed")
-            APP.logger.warning('%s button pressed by %s',
-                               action,
-                               auth.get_mac(request.remote_addr))
+            relay.press(RELAYS[action], APP.logger)
+            flash(f"{action} button pressed")
+            APP.logger.warning(f'{action} button pressed by {auth.get_mac(request.remote_addr)}')
             return redirect(url_for('index'))
         else:
             APP.logger.error('Action other than Left or Right')

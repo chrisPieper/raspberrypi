@@ -2,15 +2,15 @@
 import os
 
 
-def check(ip_address, mac_list, logger):
+def check(range, ip_address, mac_list, logger):
     " Check the IP for being within the local network. "
 
-    if '192.168.1' in ip_address:
+    if range in ip_address:
         mac = get_mac(ip_address)
         if mac in mac_list:
             return True
         else:
-            logger.warning('MAC address not found: %s', mac)
+            logger.warning(f'MAC address not found: {mac}')
             return False
     else:
         return False
