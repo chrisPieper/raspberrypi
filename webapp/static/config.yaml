@@ -1,0 +1,18 @@
+MAC_LIST:
+  # fill in with the allowed mac addresses
+  - uu:vv:ww:xx:yy:zz
+
+PIN:
+  - 32	# this pin is relay 0
+  - 36	# this pin is relay 1
+
+MOMENT: 0.01	# seconds momentarily 'ON'
+
+RANGE: 192.168.1	# IP addresses beginning
+
+RELAYS: {Left: 0, Right: 1}
+
+SEND_FILE_MAX_AGE_DEFAULT: 0
+
+SECRET_KEY: 'Use your own secret'
+		# don't use this key, make your own
