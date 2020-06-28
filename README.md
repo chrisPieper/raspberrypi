@@ -5,7 +5,8 @@ This project investigates using the Raspberry Pi to control two relays. The rela
 I became tired of paying for garage door openers which were frequently failing. I also didn't want to carry another device specifically for opening the garage door.. I wanted to be able to open and close either garage door using my cell phone.
 
 # Screenshots
-<img src="webapp/static/snapshot.png" alt="Display Snapshot" width="320" style="border:5px solid black">
+<img src="webapp/static/snapshot.png" alt="A snapshot of the cell phone display." width="320" style="border:5px solid black">
+<img src="webapp/static/Hardware.JPG" alt="A picture of the installed hardware." width="320" style="border:5px solid black">
 
 # Features
 * Raspberry Pi controlling two relays on a relay board.
