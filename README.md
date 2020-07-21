@@ -37,7 +37,7 @@ The user interface is provided by the Flask micro web framework and flask_bootst
 # Installation
 Make sure you have the latest Python 3 release installed on your Raspberry Pi. Clone the software into the installation location.
 ```
-4 git clone https://github.com/chrisPieper/raspberrypi.git
+$ git clone https://github.com/chrisPieper/raspberrypi.git
 ```
 Change directory to the 'raspberrypi' directory. 
 ```
